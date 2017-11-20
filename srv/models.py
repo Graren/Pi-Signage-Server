@@ -9,11 +9,17 @@ class Usuario(models.Model):
     class Meta:
         db_table = "usuario"
 
+    def __str__(self):
+        return self.nombre + " " + self.email + ": " + self.password
+
 class Lista(models.Model):
     nombre= models.CharField(max_length=40)
 
     class Meta:
         db_table = "lista"
+
+    def __str__(self):
+        return self.nombre
 
 class Archivo(models.Model):
     user = models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -23,6 +29,10 @@ class Archivo(models.Model):
 
     class Meta:
         db_table = "archivo"
+
+
+    def __str__(self):
+        return self.nombre + " " + self.tipo
 
 class Grupo_Dispositivos(models.Model):
     user= models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -37,3 +47,7 @@ class Dispositivo(models.Model):
 
     class Meta:
         db_table = "dispositivo"
+
+
+    def __str__(self):
+        return self.direccion_mac
