@@ -15,8 +15,20 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from srv.resources import UsuarioResource, ListaResource, ArchivoResource, Grupo_DispositivoResource, DispositivoResource
+
+user_resource = UsuarioResource()
+list_resource = ListaResource()
+file_resource = ArchivoResource()
+device_group_resource = Grupo_DispositivoResource()
+device_resource = DispositivoResource()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^', include('srv.urls'))
+    url(r'^', include('srv.urls')),
+    url(r'^srv/', include(user_resource.urls)),
+    url(r'^srv/', include(list_resource.urls)),
+    url(r'^srv/', include(file_resource.urls)),
+    url(r'^srv/', include(device_group_resource.urls)),
+    url(r'^srv/', include(device_resource.urls))
 ]
