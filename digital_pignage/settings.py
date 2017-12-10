@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'srv.apps.SrvConfig'
+    'srv.apps.SrvConfig',
+    'rest_framework',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -104,7 +106,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
+        "ROUTING": "srv.routing.channel_routing",
+    },
+}
 
+# Rest_Framework
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 

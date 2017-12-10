@@ -16,6 +16,11 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from srv.resources import UsuarioResource, ListaResource, ArchivoResource, Grupo_DispositivoResource, DispositivoResource
+from rest_framework.schemas import get_schema_view
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 user_resource = UsuarioResource()
 list_resource = ListaResource()
@@ -30,5 +35,11 @@ urlpatterns = [
     url(r'^srv/', include(list_resource.urls)),
     url(r'^srv/', include(file_resource.urls)),
     url(r'^srv/', include(device_group_resource.urls)),
-    url(r'^srv/', include(device_resource.urls))
+    url(r'^srv/', include(device_resource.urls)),
+    url(r'^api/$', get_schema_view()),
+    url(r'^api/auth/', include(
+        'rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/auth/token/obtain/$', TokenObtainPairView.as_view()),
+    url(r'^api/auth/token/refresh/$', TokenRefreshView.as_view()),
+
 ]
