@@ -1,8 +1,9 @@
 from tastypie.resources import ModelResource,ALL, ALL_WITH_RELATIONS
-from tastypie import  fields
+from tastypie import fields
 from django.db import IntegrityError
 
 from srv.authentication.JwtAuthentication import JwtAuthentication, CreateWithoutAuthentication
+from srv.authorization.UsersAuthorization import UsersAuthorization
 from tastypie.authorization import Authorization
 from django.conf.urls import url
 from django.contrib.auth import authenticate, login
@@ -16,7 +17,7 @@ class UsuarioResource(ModelResource):
         queryset = Usuario.objects.all()
         resource_name = 'user'
         authentication = CreateWithoutAuthentication()
-        authorization = Authorization()
+        authorization = UsersAuthorization()
         excludes = ['password', 'is_superuser']
         filtering = {
             'nombre': ['exact', ],
@@ -55,10 +56,11 @@ class UsuarioResource(ModelResource):
         email = data.get('email', '')
         password = data.get('password', '')
 
-        user = authenticate(email=email, password=password)
-        if user:
-            if user.is_active:
-                login(request, user)
+        try:
+            user = Usuario.objects.get(email=email)
+            if not user.check_password(password):
+                raise ValueError('Contrasena erronea')
+            if user.esta_activo:
                 return self.create_response(request, {
                     'success': True,
                     'token': user.token
@@ -68,7 +70,7 @@ class UsuarioResource(ModelResource):
                     'success': False,
                     'reason': 'disabled',
                 }, HttpForbidden)
-        else:
+        except Exception as e:
             return self.create_response(request, {
                 'success': False,
                 'reason': 'incorrect',
