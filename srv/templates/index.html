@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <input  id="input" type="text">
+    <input type="checkbox" id="check">
+    <button id="random">
+        send nudes
+    </button>
+    <button id="persona">
+        Open socket
+    </button>
+</body>
+<script>
+    const button = document.querySelector('#random')
+    const persona = document.querySelector('#persona')
+    const inp = document.querySelector('#input')
+    const check = document.querySelector('#check')
+    button.onclick = () => {
+        const j = {
+            action: {
+                sex: 1,
+                mom: "dad"
+            }
+        }
+        fetch('http://localhost:8000/sex', { method: 'POST', body: JSON.stringify(j), contentType: 'application/json', }).then(() => {
+            return
+        })
+        .catch(e => {
+            console.log(e)
+        })
+    }
+
+    persona.onclick = () => {
+        const value = inp.value
+        const isArray = check.checked
+        socket = new WebSocket("ws://" + window.location.host + "/chat/");
+        socket.onmessage = function(e) {
+            console.log(e.data);
+        }
+        socket.onopen = function() {
+            if(isArray){
+                        socket.send(JSON.stringify({ deviceGroupId: [1,2,3,4,5]}));
+            }
+            else{
+                socket.send(JSON.stringify({ deviceGroupId: value}))
+            }
+        }
+        // Call onopen directly if socket is already open
+        if (socket.readyState == WebSocket.OPEN) socket.onopen();
+    }
+
+</script>
+</html>
