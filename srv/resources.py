@@ -2,10 +2,8 @@ from tastypie.resources import ModelResource,ALL, ALL_WITH_RELATIONS
 from tastypie import  fields
 from django.db import IntegrityError
 
-from srv.authentication.JwtAuthentication import JwtAuthentication
-from srv.authorization.UsersAuthorization import UsersAuthorization
-from tastypie.authorization import Authorization, DjangoAuthorization
-from tastypie.authentication import Authentication
+from srv.authentication.JwtAuthentication import JwtAuthentication, CreateWithoutAuthentication
+from tastypie.authorization import Authorization
 from django.conf.urls import url
 from django.contrib.auth import authenticate, login
 from tastypie.utils import trailing_slash
@@ -17,8 +15,8 @@ class UsuarioResource(ModelResource):
     class Meta:
         queryset = Usuario.objects.all()
         resource_name = 'user'
-        authentication = Authentication()
-        authorization = UsersAuthorization()
+        authentication = CreateWithoutAuthentication()
+        authorization = Authorization()
         excludes = ['password', 'is_superuser']
         filtering = {
             'nombre': ['exact', ],
@@ -62,7 +60,8 @@ class UsuarioResource(ModelResource):
             if user.is_active:
                 login(request, user)
                 return self.create_response(request, {
-                    'success': True
+                    'success': True,
+                    'token': user.token
                 })
             else:
                 return self.create_response(request, {
