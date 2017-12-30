@@ -14,11 +14,13 @@ class GroupWsHolder(metaclass=Singleton):
 
     def addElement(self, index, element):
         self.group[index] = element
-        self.group.append(element)
         return True
 
     def getGroups(self):
         return self.group
 
     def getGroup(self, index):
-        return self.group[index]
+        if self.group.keys().__contains__(index):
+            return self.group[index]
+        else:
+            return None
