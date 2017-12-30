@@ -15,31 +15,25 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from tastypie.api import Api
 from srv.resources import UsuarioResource, ListaResource, ArchivoResource, Grupo_DispositivoResource, DispositivoResource
-from rest_framework.schemas import get_schema_view
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
 
-user_resource = UsuarioResource()
-list_resource = ListaResource()
-file_resource = ArchivoResource()
-device_group_resource = Grupo_DispositivoResource()
-device_resource = DispositivoResource()
+class CustomApi(Api):
+    def prepend_urls(self):
+        return [
+            url(r'^v1/mipapo', include('srv.urls')),
+        ]
+
+v1_api = CustomApi(api_name='v1')
+v1_api.register(UsuarioResource())
+v1_api.register(ListaResource())
+v1_api.register(ArchivoResource())
+v1_api.register(Grupo_DispositivoResource())
+v1_api.register(Grupo_DispositivoResource())
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('srv.urls')),
-    url(r'^srv/', include(user_resource.urls)),
-    url(r'^srv/', include(list_resource.urls)),
-    url(r'^srv/', include(file_resource.urls)),
-    url(r'^srv/', include(device_group_resource.urls)),
-    url(r'^srv/', include(device_resource.urls)),
-    url(r'^api/$', get_schema_view()),
-    url(r'^api/auth/', include(
-        'rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/auth/token/obtain/$', TokenObtainPairView.as_view()),
-    url(r'^api/auth/token/refresh/$', TokenRefreshView.as_view()),
-
+    url(r'^api/', include(v1_api.urls)),
 ]
+
