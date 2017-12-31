@@ -37,6 +37,7 @@
     persona.onclick = () => {
         const value = inp.value
         const isArray = check.checked
+        console.log(window.location.host)
         socket = new WebSocket("ws://" + window.location.host + "/chat/");
         socket.onmessage = function(e) {
             console.log(e.data);

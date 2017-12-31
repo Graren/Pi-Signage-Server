@@ -27,6 +27,9 @@ def index(request):
 def ws(request):
     return render(request, 'index.html')
 
+def requestTest(request):
+    return render(request, 'wsTest.html')
+
 @csrf_exempt
 class WsTestView(View):
     def post(self, request, *args, **kwargs):
@@ -42,7 +45,8 @@ def wsTest(request):
     stream = BytesIO(request.body)
     js = JSONParser().parse(stream)
 
-    action = js['action']
+    action = js
+    print(action)
     instance = GroupWsHolder()
     instance.getGroup("pi").send({
         "text": json.dumps(action)
