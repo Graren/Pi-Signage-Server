@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from tastypie.api import Api
-from srv.resources import UsuarioResource, ListaResource, ArchivoResource, Grupo_DispositivoResource, DispositivoResource
+from srv.resources import UsuarioResource, ListaResource, ArchivoResource, GrupoDispositivoResource, DispositivoResource
 
 class CustomApi(Api):
     def prepend_urls(self):
@@ -28,8 +28,8 @@ v1_api = CustomApi(api_name='v1')
 v1_api.register(UsuarioResource())
 v1_api.register(ListaResource())
 v1_api.register(ArchivoResource())
-v1_api.register(Grupo_DispositivoResource())
-v1_api.register(Grupo_DispositivoResource())
+v1_api.register(GrupoDispositivoResource())
+v1_api.register(DispositivoResource())
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
