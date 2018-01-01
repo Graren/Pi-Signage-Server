@@ -1,7 +1,5 @@
-.DS_STORE
-*.log
+# NodeJS modules folder
 node_modules
-dist
-coverage
-.idea/
-.yarn-cache
+
+# npm debug log
+npm-debug.log

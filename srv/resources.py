@@ -171,7 +171,7 @@ class DispositivoResource(ModelResource):
             }, HttpBadRequest)
 
     def info(self, request, **kwargs):
-        self.method_check(request, allowed=['post'])
+        self.method_check(request, allowed=['get'])
         auth_type = 'bearer'
         authorization = request.META.get('HTTP_AUTHORIZATION', '')
         try:
