@@ -20,10 +20,21 @@ class UsuarioResource(ModelResource):
         resource_name = 'user'
         authentication = CreateWithoutAuthentication()
         authorization = UsersAuthorization()
-        excludes = ['password', 'is_superuser']
+        always_return_data = True
+        excludes = ['activo', 'groups', 'is_superuser', 'last_login', 'password', 'user_permissions']
         filtering = {
             'nombre': ['exact', ],
         }
+
+    def dehydrate(self, bundle):
+        include_token = bundle.data.get('include_token', False)
+        bundle.data.pop('password')
+
+        if include_token:
+            bundle.data.pop('include_token')
+            bundle.data['token'] = bundle.obj.token
+
+        return bundle
 
     @property
     def ignore_post_fields(self):
@@ -47,6 +58,7 @@ class UsuarioResource(ModelResource):
         except IntegrityError as e:
             raise BadRequest('Este correo ya existe')
 
+        bundle.data['include_token'] = True
         return bundle
 
     def override_urls(self):

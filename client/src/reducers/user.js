@@ -14,7 +14,11 @@ const userReducer = (state = initialState, action) => {
       const { payload: { data } } = action
       return {
         ...state,
-        ...data
+        ...{
+          email: data.email,
+          id: data.id,
+          name: data.nombre
+        }
       }
     }
     case SET_USER_TOKEN:
