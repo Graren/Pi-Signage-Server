@@ -13,7 +13,10 @@
   "keywords": [],
   "author": "",
   "babel": {
-    "plugins": ["react-hot-loader/babel", "transform-class-properties"],
+    "plugins": [
+      "react-hot-loader/babel",
+      "transform-class-properties"
+    ],
     "presets": [
       [
         "es2015",
@@ -65,6 +68,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "classnames": "^2.2.5",
     "eslint": "^4.14.0",
@@ -73,6 +77,7 @@
     "react-dom": "^16.2.0",
     "redux": "^3.7.2",
     "redux-form": "^7.2.0",
+    "redux-persist": "^5.4.0",
     "redux-saga": "^1.0.0-beta.0",
     "redux-saga-requests": "^0.5.0",
     "redux-saga-requests-axios": "^0.5.0"
