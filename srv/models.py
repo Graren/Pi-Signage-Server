@@ -74,7 +74,8 @@ class Archivo(models.Model):
     lista = models.ForeignKey(Lista)
     nombre = models.CharField(max_length=100)
     tipo = models.CharField(max_length=30)
-
+    url = models.CharField(max_length=200, default="https://ia801609.us.archive.org/13/items/video_rapid_201703/video_rapid_240x350.mp4")
+    time = models.IntegerField(null=True)
     class Meta:
         db_table = "archivo"
 

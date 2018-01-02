@@ -8,19 +8,34 @@
 </head>
 <body>
     <div>
+        <span>URL</span>
         <input id="input" type="text">
+        <span>Video ID (UNIQUE)</span>
         <input id="name" type="text">
+        <span>Number of concurrent requests</span>
         <input id="number" type="text">
+        <span>Duration(Images)</span>
         <input id="time" type="number">
-        <button id="button">Save file</button>
-        <button id="delete">Delete</button>
-        <button id="deleteAll">Delete all</button>
-        <button id="playlist">Playlist</button>
+
+        <span>Device Id</span>
+        <input id="devId" type="number">
+
+        <span>Device group Id (comma separated if there is more than one)</span>
+        <input id="DevGId" type="number">
+
+        <span>Type</span>
         <select name="" id="select">
             <option value="jpg">JPG</option>
             <option value="png">PNG</option>
             <option value="mp4">MP4</option>
         </select>
+        <br>
+
+        <button id="button">Save file</button>
+        <button id="delete">Delete</button>
+        <button id="deleteAll">Delete all</button>
+        <button id="playlist">Playlist</button>
+
     </div>
 </body>
 <script>
@@ -37,6 +52,9 @@
     const select = document.querySelector('#select')
     const num = document.querySelector('#number')
     const timeInput = document.querySelector('#time')
+
+    const devId = document.querySelector('#devId')
+    const devGId = document.querySelector('#devGId')
 
 
     button.onclick = () => {
@@ -57,7 +75,9 @@
             }
             const msg = {
                 action: ADD,
-                deviceGroupId: 1,
+                request: {
+                    deviceId: 5
+                },
                 payload: data
             }
             msgs.push(msg)
@@ -87,7 +107,9 @@
             }
             const msg = {
                 action: DELETE,
-                deviceGroupId: 1,
+                request: {
+                    deviceId: 5
+                },
                 payload: data
             }
             msgs.push(msg)
@@ -108,7 +130,9 @@
     deleteAllButton.onclick = () => {
         const msg = {
             action: DELETE_PLAYLIST,
-            deviceGroupId: 1,
+            request: {
+                    deviceId: 5
+                },
         }
         fetch('http://localhost:8000/sex',{ method: 'POST', body: JSON.stringify(msg), contentType: 'application/json', }).then(() => {
                 return
@@ -138,7 +162,9 @@
 
         const msg = {
                 action: CHANGE_PLAYLIST,
-                deviceGroupId: 1,
+                request: {
+                    deviceId: 5
+                },
                 payload: {
                     playlist
                 }

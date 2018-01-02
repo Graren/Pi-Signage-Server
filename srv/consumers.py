@@ -5,6 +5,7 @@ from urllib.parse import parse_qs
 from channels.auth import channel_session_user_from_http, channel_session_user
 from srv.testWS.wsGroups import GroupWsHolder
 import json
+from srv.models import Usuario, Dispositivo, GrupoDispositivos, Lista, Archivo
 
 groups = []
 instance = GroupWsHolder()
@@ -29,46 +30,49 @@ def ws_disconnect(message):
 
 def ws_message(message):
     js = json.loads(message.content['text'])
+    print(js)
     if js['type'] and js['type'] == REQUEST_CONTENT:
         if 'id' in js:
+            # Get whatever playlist is up for this guy
+            id = int(js['id'])
+            device = Dispositivo.objects.get(id=id)
+            files = device.grupo.lista.archivo_set.all()
+            playlist = []
+            for file in files:
+                playlist.append({
+                    'name': file.id,
+                    'id': file.id,
+                    'format': file.tipo,
+                    'url': file.url,
+                    'time': None if file.tipo == 'mp4' else file.time
+                })
+            print(playlist)
             msg = {
-                'deviceId': js['id'],
-                'playlist': {
-                    'sex': {
-                        "beach": 1
-                    }
+                'request': {
+                    'type': REQUEST_CONTENT,
+                    'deviceId': id,
+                },
+                'response': {
+                    'playlist': playlist
                 }
             }
-            instance.getGroup(str(js['id'])).send(msg)
-    if js['type'] and js['type'] == REQUEST_GROUP:
+            instance.getGroup("pi").send({
+                'text' : json.dumps(msg)
+            })
+    elif js['type'] and js['type'] == REQUEST_GROUP:
         if 'id' in js:
-            pi = instance.getGroup(str(js['id']))
-            if pi is None:
-                Group(str(js['id'])).add(message.reply_channel)
-                instance.addElement(str(js['id']), Group(str(js['id'])))
+            pi = instance.getGroup("pi")
             msg = {
-                'request': REQUEST_GROUP,
+                'request': {
+                    'type': REQUEST_GROUP,
+                    'deviceId': js['id']
+                },
                 'response': {
-                    'deviceId': js['id'],
                     'success': True
                 }
             }
-            instance.getGroup(str(js['id'])).send({
+            pi.send({
                 'text': json.dumps(msg)
-            })
-    elif js['type'] and js['type'] == ADDED_GROUP:
-        if 'deviceGroupId' in js:
-            for j in js['deviceGroupId']:
-                Group(str(j)).add(message.reply_channel)
-                group = instance.getGroup(str(j))
-                if (group is None):
-                    instance.addElement(str(j), Group(str(j)))
-                instance.getGroup(str(j)).send({
-                    "text": 'Group added succesfully'
-                })
-        else:
-            instance.getGroup('pi').send({
-                "text": "listen"
             })
     else:
         instance.getGroup('pi').send({
