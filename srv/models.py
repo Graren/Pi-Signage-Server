@@ -45,7 +45,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
         token = jwt.encode({
             'id': self.pk,
-            'exp': int(dt.strftime('%S'))
+            'exp': int(dt.timestamp())
         }, settings.SECRET_KEY, algorithm='HS256')
 
         return token.decode('utf-8')
@@ -114,7 +114,7 @@ class Dispositivo(models.Model):
 
         token = jwt.encode({
             'dispositivo': self.pk,
-            'exp': int(dt.strftime('%s'))
+            'exp': int(dt.timestamp())
         }, settings.SECRET_KEY, algorithm='HS256')
 
         return token.decode('utf-8')
