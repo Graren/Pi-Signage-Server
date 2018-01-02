@@ -8,6 +8,28 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.six import BytesIO
 from rest_framework.parsers import JSONParser
+import boto
+import mimetypes
+import json
+
+conn = boto.connect_s3('AKIAJAR7VA2F2TABRFTQ', '4k0B2GkxJpdcseh2BChaCzgb2O0QWq78kQmcNg2i')
+
+def sign_s3_upload(request):
+    object_name = request.GET['objectName']
+    content_type = mimetypes.guess_type(object_name)[0]
+    filename = 'files/' + object_name
+    signed_url = conn.generate_url(
+        300,
+        "PUT",
+        'dr-1807-tesis',
+        filename,
+        headers = {'Content-Type': content_type, 'x-amz-acl':'public-read'})
+
+    return HttpResponse(json.dumps({
+        'signedUrl': signed_url,
+        'filename': filename
+    }))
+
 
 class MessageSerializer(serializers.Serializer):
     message = serializers.CharField()

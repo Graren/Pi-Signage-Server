@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { push as routerPush } from 'react-router-redux'
 
 import './Home.scss'
 
@@ -10,7 +11,15 @@ import SignupContainer from './containers/SignupContainer'
 
 class Home extends React.Component {
   static propTypes = {
-    authMode: PropTypes.string
+    authMode: PropTypes.string,
+    isLoggedIn: PropTypes.bool,
+    goToAdminPanel: PropTypes.func
+  }
+
+  componentDidMount () {
+    if (this.props.isLoggedIn) {
+      this.props.goToAdminPanel()
+    }
   }
 
   renderAuthSection = () => {
@@ -41,8 +50,15 @@ class Home extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    authMode: state.home.authMode
+    authMode: state.home.authMode,
+    isLoggedIn: !!state.user.token
   }
 }
 
-export default connect(mapStateToProps)(Home)
+const mapDispatchToProps = dispatch => {
+  return {
+    goToAdminPanel: () => dispatch(routerPush('/admin'))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

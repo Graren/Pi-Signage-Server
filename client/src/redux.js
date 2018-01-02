@@ -12,6 +12,7 @@ import rootSaga from './sagas'
 
 const config = {
   key: 'root',
+  blacklist: ['navbar'],
   storage
 }
 
