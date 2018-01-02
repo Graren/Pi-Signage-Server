@@ -1,0 +1,202 @@
+$fa-font-path: "~font-awesome/fonts";
+@import '~font-awesome/scss/font-awesome.scss';
+.has-margin {
+    &.bottom-sm {
+        margin-bottom: 5px;
+    }
+    &.bottom-md {
+        margin-bottom: 10px;
+    }
+    &.bottom-lg {
+        margin-bottom: 20px;
+    }
+    &.top-sm {
+        margin-top: 5px;
+    }
+    &.top-md {
+        margin-top: 10px;
+    }
+    &.top-lg {
+        margin-top: 20px;
+    }
+    &.left-sm {
+        margin-left: 5px;
+    }
+    &.left-md {
+        margin-left: 10px;
+    }
+    &.left-lg {
+        margin-left: 20px;
+    }
+    &.right-sm {
+        margin-right: 5px;
+    }
+    &.right-md {
+        margin-right: 10px;
+    }
+    &.right-lg {
+        margin-right: 20px;
+    }
+}
+
+body .nav #brand-title {
+    font-size: 22px;
+    color: #00d1b2;
+    user-select: none;
+}
+
+body .invisible {
+    display: none !important;
+}
+
+body .underline {
+    height: 2px;
+    margin-left: 4px;
+}
+
+body .vertical-divider {
+    height: auto;
+    width: 2px;
+    background-color: #00d1b2;
+}
+
+body .main {
+    background-color: inherit;
+}
+
+body .main .karma-search-modes * {
+    flex: 0 1 auto;
+}
+
+body .main .karma-search-modes label {
+    display: inline-block;
+}
+
+body .main .karma-search-modes label input[type="radio"] {
+    margin: 0 5px;
+}
+
+body .main .karma-search-modes label input[type="number"] {
+    width: 50px;
+}
+
+body .main #search-btn {
+    margin-left: 10px;
+}
+
+body .main #gossip-text {
+    width: 100%;
+    resize: none;
+    padding: 10px;
+    color: grey;
+    font-size: 16px;
+}
+
+body .main #gossip-push-button {
+    text-align: center;
+    display: inherit;
+    margin: 0 auto;
+}
+
+body .main .search-gossips,
+body .main .user-gossips {
+    padding: 10px;
+}
+
+body .main .search-gossips .gossip,
+body .main .user-gossips .gossip {
+    flex: 0 1 31%;
+    margin: 14px;
+}
+
+body .main .gossips-section .title {
+    margin-bottom: 9px;
+}
+
+body .main .gossips-section .title .icon {
+    line-height: 29px;
+}
+
+body .main .gossips-section.hot-gossips .title {
+    color: #ff470f;
+}
+
+body .main .gossips-section.hot-gossips .underline {
+    background-color: #ff470f;
+}
+
+body .main .gossips-section.new-gossips .title {
+    color: #145BD5;
+}
+
+body .main .gossips-section.new-gossips .underline {
+    background-color: #145BD5;
+}
+
+body .main .gossips-section.all-gossips .title {
+    color: #00d1b2;
+}
+
+body .main .gossips-section.all-gossips .underline {
+    background-color: #00d1b2;
+}
+
+body .main .gossips-section.deleted-gossips .title {
+    color: #ff3860;
+}
+
+body .main .gossips-section.deleted-gossips .underline {
+    background-color: #ff3860;
+}
+
+body .main .gossips-section .gossips-wrapper {
+    margin-top: 10px;
+}
+
+body .logs .underline {
+    background-color: turquoise;
+}
+
+body .logs .logs-wrapper {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+body .logs .logs-wrapper .log {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5.9px;
+    background-color: white;
+}
+
+body .logs .logs-wrapper .log:last-child {
+    margin-bottom: 10px;
+}
+
+body .login .alias {
+    height: auto;
+    font-size: 26px;
+    margin: 20px auto;
+}
+
+body .login .alias:focus {
+    border-color: #145BD5;
+}
+
+body .login .role.button {
+    font-size: 24px;
+    padding: 15px;
+    border-width: 4px;
+    height: auto;
+}
+
+body .login .role.button.active {
+    border: 4px solid #145BD5;
+}
+
+body .login #login-btn {
+    margin-top: 20px;
+    font-size: 20px;
+    height: auto;
+    padding: 10px;
+}

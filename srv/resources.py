@@ -34,6 +34,13 @@ class UsuarioResource(ModelResource):
             for field in self.ignore_post_fields:
                 bundle.data.pop(field, None)
 
+            email = bundle.data.get('email', '')
+            password = bundle.data.get('password', '')
+            if len(email) == 0:
+                raise BadRequest('Correo Inválido')
+            if len(password) == 0:
+                raise BadRequest('Contraseña Inválida')
+
             bundle = super(UsuarioResource, self).obj_create(bundle, **kwargs)
             bundle.obj.set_password(bundle.data.get('password'))
             bundle.obj.save()
@@ -46,7 +53,10 @@ class UsuarioResource(ModelResource):
         return [
             url(r"^(?P<resource_name>%s)/login%s$" %
                 (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('login'), name="api_login")
+                self.wrap_view('login'), name="api_login"),
+            url(r"^(?P<resource_name>%s)/me%s$" %
+                (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('me'), name="me")
         ]
 
     def login(self, request, **kwargs):
@@ -77,6 +87,22 @@ class UsuarioResource(ModelResource):
                 'success': False,
                 'reason': 'incorrect',
             }, HttpUnauthorized)
+
+    def me(self, request, **kwargs):
+        self.method_check(request, allowed=['get'])
+        try:
+            user = model_to_dict(request.user)
+            remove_fields = ['activo', 'groups', 'is_superuser',
+                             'last_login', 'password', 'user_permissions']
+            for field in remove_fields:
+                user.pop(field, None)
+
+            return self.create_response(request, user)
+        except Exception as e:
+            return self.create_response(request, {
+                'success': False,
+                'reason': 'Hubo un error al obtener la informacion de tu usuario',
+            }, HttpBadRequest)
 
 
 class ListaResource(ModelResource):

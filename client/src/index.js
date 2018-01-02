@@ -1,21 +1,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import 'bulma/css/bulma.css'
-import { Routes } from './Routes/Routes'
+import { AppContainer } from 'react-hot-loader'
+import App from './App'
 
-const title = 'Minimilistic React-webpack-3-boilerplate [2017]'
-class App extends React.Component {
-  render () {
-    return (
-      <div>
-        <div className='column is-half is-offset-one-quarter'>
-          <div className='title'>{title}</div>
-        </div>
-        <Routes />
-      </div>
-    )
-  }
+const render = Component => {
+  ReactDOM.render(
+    <AppContainer>
+      <Component />
+    </AppContainer>,
+    document.getElementById('app')
+  )
 }
 
-ReactDOM.render(<App />, app)
-module.hot.accept()
+render(App)
+
+// Webpack Hot Module Replacement API
+if (module.hot) {
+  module.hot.accept('./App', () => {
+    render(App)
+  })
+}

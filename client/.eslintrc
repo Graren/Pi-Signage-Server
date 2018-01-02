@@ -1,18 +1,13 @@
 {
-    parser: "babel-eslint",
-    "plugins": [
-        "react"
-    ],
-    "rules":
-    {
-        "max-len": [1, 120, 2,
-        {
-            ignoreComments: true
-        }],
-        "react/prop-types": [1],
-    },
-    /*"extends": [
-        "eslint:recommended",
-        "plugin:react/recommended"
-    ],*/
+  "extends": ["eslint:recommended", "plugin:react/recommended", "standard"],
+  "parser": "babel-eslint",
+  "ecmaFeatures": {
+    "jsx": true,
+    "modules": true
+  },
+  "plugins": ["eslint-plugin-react"],
+  "rules": {
+    "no-extra-parens": 0,
+    "react/jsx-uses-vars": 1
+  }
 }

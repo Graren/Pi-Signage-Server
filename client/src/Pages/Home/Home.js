@@ -1,30 +1,48 @@
 import React from 'react'
-import { NavBar } from '../../components/Navbar/NavBar'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
-export class Home extends React.Component {
+import './Home.scss'
+
+import Title from './components/Title'
+import LoginContainer from './containers/LoginContainer'
+import SignupContainer from './containers/SignupContainer'
+
+class Home extends React.Component {
+  static propTypes = {
+    authMode: PropTypes.string
+  }
+
+  renderAuthSection = () => {
+    const { authMode } = this.props
+    if (authMode === 'login') {
+      return <LoginContainer />
+    } else if (authMode === 'signup') {
+      return <SignupContainer />
+    } else {
+      return null
+    }
+  }
+
   render () {
     return (
-      <div>
-        <NavBar menu1={'Home'} menu2={'About'} />
-        <div className='columns'>
-          <div className='column is-half is-offset-one-quarter'>
-            <ul>
-              <li>
-                It's hard enough to find an error in your code when you're looking for it;
-                it's even harder when you've assumed your code is error-free.
-              </li>
-              <li>
-                If debugging is the process of removing software bugs,
-                then programming must be the process of putting them in.
-              </li>
-              <li>
-                Always code as if the guy who ends up maintaining your code will
-                be a violent psychopath who knows where you live.
-              </li>
-            </ul>
+      <section className="hero is-fullheight login">
+        <div className="hero-body">
+          <div className="container has-text-centered">
+            <Title className="is-spaced" />
+            <h2 className="subtitle is-4">Panel de Administración</h2>
+            {this.renderAuthSection()}
           </div>
         </div>
-      </div>
+      </section>
     )
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    authMode: state.home.authMode
+  }
+}
+
+export default connect(mapStateToProps)(Home)
