@@ -1,8 +1,5 @@
 // @flow
-import { call, put, takeEvery, select } from 'redux-saga/effects'
-import { success } from 'redux-saga-requests'
-import { LOGIN } from '../actions/home'
-import { updateUserData } from '../actions/user'
+import { put, takeEvery, select } from 'redux-saga/effects'
 
 const getActionPayload = action =>
   action.payload === undefined ? action : action.payload
