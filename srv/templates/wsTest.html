@@ -35,6 +35,7 @@
         <button id="delete">Delete</button>
         <button id="deleteAll">Delete all</button>
         <button id="playlist">Playlist</button>
+        <button id="throw">Throw</button>
 
     </div>
 </body>
@@ -43,12 +44,14 @@
     const ADD = 'ADD'
     const CHANGE_PLAYLIST = 'CHANGE_PLAYLIST'
     const DELETE_PLAYLIST = 'DELETE_PLAYLIST'
+    const B_THROW = 'B_THROW'
     const button = document.querySelector('#button')
     const input = document.querySelector('#input')
     const nameInput = document.querySelector('#name')
     const deleteButton= document.querySelector('#delete')
     const deleteAllButton= document.querySelector('#deleteAll')
     const playlistButton = document.querySelector('#playlist')
+    const throwButton = document.querySelector('#throw')
     const select = document.querySelector('#select')
     const num = document.querySelector('#number')
     const timeInput = document.querySelector('#time')
@@ -174,6 +177,21 @@
         })
         .catch(e => {
             console.log(e)
+        })
+    }
+
+    throwButton.onclick = () => {
+        const msg = {
+            action: B_THROW,
+            request: {
+                    deviceId: 5
+                },
+        }
+        fetch('http://localhost:8000/sex',{ method: 'POST', body: JSON.stringify(msg), contentType: 'application/json', }).then(() => {
+                return
+        })
+            .catch(e => {
+                console.log(e)
         })
     }
 </script>
