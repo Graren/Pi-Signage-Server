@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const path = require('path')
-
+console.log(path.join(__dirname, 'dist'))
 const config = {
   entry: [
     'webpack-dev-server/client?http://localhost:8080',
@@ -63,7 +63,7 @@ const config = {
     extensions: ['*', '.js', '.jsx', '.css']
   },
   output: {
-    path: path.join(__dirname, '/dist'),
+    path: path.join(__dirname, 'dist'),
     publicPath: '/',
     filename: 'bundle.js'
   },
@@ -78,7 +78,7 @@ const config = {
     })
   ],
   devServer: {
-    contentBase: './dist',
+    contentBase: path.join(__dirname, 'dist'),
     publicPath: '/',
     historyApiFallback: true,
     hot: true
