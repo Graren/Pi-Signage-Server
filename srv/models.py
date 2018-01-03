@@ -42,7 +42,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     def _generate_jwt_token(self):
         dt = datetime.now() + timedelta(days=60)
-        ka = dt.strftime('%s')
         token = jwt.encode({
             'id': self.pk,
             'exp': int(dt.timestamp())
