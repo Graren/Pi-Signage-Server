@@ -2470,6 +2470,10 @@ file-entry-cache@^2.0.0:
     flat-cache "^1.2.1"
     object-assign "^4.0.1"
 
+file-extension@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/file-extension/-/file-extension-4.0.1.tgz#94cffc9ac5260b9c1b09ba923f78becfbe6a227f"
+
 file-loader@^1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/file-loader/-/file-loader-1.1.6.tgz#7b9a8f2c58f00a77fddf49e940f7ac978a3ea0e8"
@@ -5195,6 +5199,12 @@ react-s3-uploader@4.5.0:
     object-assign "^2.0.0"
     prop-types "^15.5.8"
     uuid "^3.1.0"
+
+react-table@^6.7.6:
+  version "6.7.6"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-6.7.6.tgz#3f9e3b308328ceb04ef93a47babefaba2619c905"
+  dependencies:
+    classnames "^2.2.5"
 
 react-test-renderer@^16.2.0:
   version "16.2.0"

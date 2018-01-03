@@ -4,6 +4,7 @@ import { PersistGate } from 'redux-persist/es/integration/react'
 import { Routes } from './Routes/Routes'
 import { configureStore } from './redux'
 import 'bulma/css/bulma.css'
+import 'react-table/react-table.css'
 import './globals.scss'
 
 const { store, persistor } = configureStore()

@@ -46,7 +46,7 @@ const config = {
             options: {
               name: '[name].[ext]',
               outputPath: 'fonts/', // where the fonts will go
-              publicPath: '../' // override the default path
+              publicPath: '/' // override the default path
             }
           }
         ]
@@ -79,10 +79,12 @@ const config = {
   ],
   devServer: {
     contentBase: './dist',
+    publicPath: '/',
     historyApiFallback: true,
     hot: true
   }
 }
+
 if (process.env.NODE_ENV === 'production') {
   config.plugins.push(
     new webpack.optimize.UglifyJsPlugin({ sourceMap: true }),

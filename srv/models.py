@@ -53,7 +53,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 @receiver(post_save, sender=Usuario)
 def user_post_save(sender, instance, created, **kwargs):
     if created:
-        lista = Lista(nombre='Lista por defecto de {}'.format(instance.nombre))
+        lista = Lista(user= instance, nombre='Lista por defecto de {}'.format(instance.nombre))
         lista.save()
         grupo = GrupoDispositivos(lista=lista, user=instance, nombre='Lista por defecto de {}'.format(instance.nombre))
         grupo.save()
@@ -61,6 +61,7 @@ def user_post_save(sender, instance, created, **kwargs):
         grupo_defecto.save()
 
 class Lista(models.Model):
+    user = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=40)
 
     class Meta:
@@ -70,12 +71,12 @@ class Lista(models.Model):
         return self.nombre
 
 class Archivo(models.Model):
-    user = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     lista = models.ForeignKey(Lista)
     nombre = models.CharField(max_length=100)
     tipo = models.CharField(max_length=30)
-    url = models.CharField(max_length=200, default="https://ia801609.us.archive.org/13/items/video_rapid_201703/video_rapid_240x350.mp4")
-    time = models.IntegerField(null=True)
+    url = models.CharField(max_length=255)
+    tiempo = models.IntegerField(null=True)
+
     class Meta:
         db_table = "archivo"
 

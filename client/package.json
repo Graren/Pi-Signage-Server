@@ -5,7 +5,7 @@
   "license": "ISC",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server -d --env.platform=default --progress",
+    "dev": "webpack-dev-server -d --progress",
     "build": "NODE_ENV='production' webpack -p --progress",
     "test": "jest --config jest.config.json --updateSnapshot",
     "lint": "eslint ."
@@ -72,6 +72,7 @@
     "babel-runtime": "^6.26.0",
     "classnames": "^2.2.5",
     "eslint": "^4.14.0",
+    "file-extension": "^4.0.1",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
     "react": "^16.2.0",
@@ -79,6 +80,7 @@
     "react-dropzone": "^4.2.3",
     "react-dropzone-s3-uploader": "^1.1.0",
     "react-router-redux": "^5.0.0-alpha.9",
+    "react-table": "^6.7.6",
     "redux": "^3.7.2",
     "redux-form": "^7.2.0",
     "redux-persist": "^5.4.0",

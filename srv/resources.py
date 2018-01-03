@@ -5,6 +5,7 @@ from django.forms.models import model_to_dict
 import jwt
 from srv.authentication.JwtAuthentication import JwtAuthentication, CreateWithoutAuthentication
 from srv.authorization.UsersAuthorization import UsersAuthorization
+from srv.authorization.UserObjectsOnlyAuthorization import UserObjectsOnlyAuthorization
 from tastypie.authorization import Authorization
 from django.conf.urls import url
 from django.conf import settings
@@ -28,7 +29,7 @@ class UsuarioResource(ModelResource):
 
     def dehydrate(self, bundle):
         include_token = bundle.data.get('include_token', False)
-        bundle.data.pop('password')
+        bundle.data.pop('password', None)
 
         if include_token:
             bundle.data.pop('include_token')
@@ -118,22 +119,53 @@ class UsuarioResource(ModelResource):
 
 
 class ListaResource(ModelResource):
+    user = fields.ForeignKey(UsuarioResource, 'user')
+
     class Meta:
         queryset = Lista.objects.all()
         resource_name = 'list'
+        always_return_data = True
+        authentication = JwtAuthentication()
+        authorization = UserObjectsOnlyAuthorization()
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        if bundle.request.user.is_superuser:
+            bundle.data.setdefault('user', bundle.request.user)
+        else:
+            bundle.data['user'] = bundle.request.user
+
+        bundle = super(ListaResource, self).obj_create(bundle, **kwargs)
+        bundle.obj.save()
+        return bundle
 
 class ArchivoResource(ModelResource):
-    user = fields.ForeignKey(UsuarioResource, 'user',full=True)
     list = fields.ForeignKey(ListaResource, 'lista',full=True)
+
     class Meta:
         queryset = Archivo.objects.all()
         resource_name = 'file'
         authorization = Authorization()
         filtering = {
-            'user': ALL_WITH_RELATIONS,
             'list': ALL_WITH_RELATIONS,
             'nombre': ['exact',],
         }
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        try:
+            bundle.data['list'] = Lista.objects.get(pk=bundle.data['listId'])
+        except Exception:
+            return self.create_response(request, {
+                'success': False,
+                'reason': 'Lista invalida',
+            }, HttpBadRequest)
+
+        if not bundle.data.get('tipo', 'tipo') == 'mp4':
+            bundle.data['tiempo'] = 10
+
+        bundle = super(ArchivoResource, self).obj_create(bundle, **kwargs)
+        bundle.obj.save()
+        return bundle
+
 
 class GrupoDispositivoResource(ModelResource):
     user = fields.ForeignKey(UsuarioResource, 'user', full=True)
