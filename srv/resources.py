@@ -3,6 +3,7 @@ from tastypie import fields
 from django.db import IntegrityError
 from django.forms.models import model_to_dict
 import jwt
+import json
 from srv.authentication.JwtAuthentication import JwtAuthentication, CreateWithoutAuthentication
 from srv.authorization.UsersAuthorization import UsersAuthorization
 from srv.authorization.UserObjectsOnlyAuthorization import UserObjectsOnlyAuthorization
@@ -14,6 +15,8 @@ from tastypie.utils import trailing_slash
 from tastypie.http import HttpUnauthorized, HttpForbidden, HttpBadRequest
 from tastypie.exceptions import BadRequest
 from srv.models import Usuario, Dispositivo, GrupoDispositivos, Lista, Archivo
+from srv.utils import send_ws_message_to_pi_groups
+from srv.actions import Actions
 
 class UsuarioResource(ModelResource):
     class Meta:
@@ -138,6 +141,13 @@ class ListaResource(ModelResource):
         bundle.obj.save()
         return bundle
 
+    def obj_delete(self, bundle, **kwargs):
+        groups = GrupoDispositivos.objects.filter(lista=kwargs['pk'])
+        msg = Actions.delete_playlist()
+        send_ws_message_to_pi_groups(groups, msg)
+
+        return super(ListaResource, self).obj_delete(bundle, **kwargs)
+
 class ArchivoResource(ModelResource):
     list = fields.ForeignKey(ListaResource, 'lista',full=True)
 
@@ -164,16 +174,47 @@ class ArchivoResource(ModelResource):
 
         bundle = super(ArchivoResource, self).obj_create(bundle, **kwargs)
         bundle.obj.save()
+        groups = GrupoDispositivos.objects.filter(lista=bundle.data['list'])
+        msg = Actions.add_file(bundle.obj)
+        send_ws_message_to_pi_groups(groups, msg)
+
         return bundle
+
+    def obj_delete(self, bundle, **kwargs):
+        file = Archivo.objects.get(pk=kwargs['pk'])
+        groups = GrupoDispositivos.objects.filter(lista=file.lista)
+        msg = Actions.delete_file(file.id)
+        send_ws_message_to_pi_groups(groups, msg)
+
+        return super(ArchivoResource, self).obj_delete(bundle, **kwargs)
 
 
 class GrupoDispositivoResource(ModelResource):
     user = fields.ForeignKey(UsuarioResource, 'user', full=True)
     list = fields.ForeignKey(ListaResource, 'lista', full=True)
+
     class Meta:
         queryset = GrupoDispositivos.objects.all()
         resource_name = 'deviceGroup'
         authorization = Authorization()
+
+    def obj_update(self, bundle, **kwargs):
+        new_list_id = bundle.data.get('lista', None)
+
+        if new_list_id:
+            group = GrupoDispositivos.objects.get(pk=kwargs['pk'])
+            try:
+                playlist = Lista.objects.get(pk=new_list_id)
+            except Lista.DoesNotExist:
+                raise BadRequest('La nueva lista no existe')
+
+            if group.lista_id != new_list_id:
+                bundle.data['list'] = playlist
+                playlist_files = Archivo.objects.filter(lista=playlist)
+                msg = Actions.change_playlist(playlist_files)
+                send_ws_message_to_pi_groups([group], msg)
+
+        return super(GrupoDispositivoResource, self).obj_update(bundle, **kwargs)
 
 class DispositivoResource(ModelResource):
     grupo = fields.ForeignKey(GrupoDispositivoResource, 'grupo', full=True)

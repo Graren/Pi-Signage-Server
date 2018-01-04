@@ -54,10 +54,11 @@ def user_post_save(sender, instance, created, **kwargs):
     if created:
         lista = Lista(user= instance, nombre='Lista por defecto de {}'.format(instance.nombre))
         lista.save()
-        grupo = GrupoDispositivos(lista=lista, user=instance, nombre='Lista por defecto de {}'.format(instance.nombre))
+        grupo = GrupoDispositivos(lista=lista, user=instance, nombre='Grupo por defecto de {}'.format(instance.nombre))
         grupo.save()
         grupo_defecto = GrupoDefecto(user=instance, grupo=grupo)
         grupo_defecto.save()
+
 
 class Lista(models.Model):
     user = models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -70,7 +71,7 @@ class Lista(models.Model):
         return self.nombre
 
 class Archivo(models.Model):
-    lista = models.ForeignKey(Lista)
+    lista = models.ForeignKey(Lista, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100)
     tipo = models.CharField(max_length=30)
     url = models.CharField(max_length=255)
@@ -85,7 +86,7 @@ class Archivo(models.Model):
 class GrupoDispositivos(models.Model):
     user = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100)
-    lista = models.ForeignKey(Lista, on_delete=models.CASCADE)
+    lista = models.ForeignKey(Lista, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         db_table = "grupo_dispositivos"
@@ -98,7 +99,7 @@ class GrupoDefecto(models.Model):
         db_table = "grupo_defecto"
 
 class Dispositivo(models.Model):
-    grupo = models.ForeignKey(GrupoDispositivos)
+    grupo = models.ForeignKey(GrupoDispositivos, null=True, on_delete=models.SET_NULL)
     nombre = models.CharField(max_length=100)
     direccion_mac = models.CharField(max_length=25)
     activo = models.BooleanField(_('active'), default=False)
