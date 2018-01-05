@@ -13,6 +13,8 @@ instance = GroupWsHolder()
 REQUEST_CONTENT = 'REQUEST_CONTENT'
 ADDED_GROUP = 'ADDED_GROUP'
 REQUEST_GROUP = 'REQUEST_GROUP'
+PING = 'PING'
+PONG = 'PONG'
 # Connected to websocket.connect
 
 def ws_add(message):
@@ -69,6 +71,21 @@ def ws_message(message):
                 },
                 'response': {
                     'success': True
+                }
+            }
+            pi.send({
+                'text': json.dumps(msg)
+            })
+    elif js['type'] and js['type'] == PING:
+        if 'id' in js:
+            pi = instance.getGroup("pi")
+            msg = {
+                'request': {
+                    'type': PING,
+                    'deviceId': js['id']
+                },
+                'response': {
+                    'type': PONG
                 }
             }
             pi.send({
