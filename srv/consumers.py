@@ -44,7 +44,7 @@ def ws_message(message):
                     'id': file.id,
                     'format': file.tipo,
                     'url': file.url,
-                    'time': None if file.tipo == 'mp4' else file.time
+                    'time': None if file.tipo == 'mp4' else file.tiempo
                 })
             print(playlist)
             msg = {
