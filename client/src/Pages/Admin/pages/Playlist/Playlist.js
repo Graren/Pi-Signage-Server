@@ -24,8 +24,8 @@ if (process.env.NODE_ENV === 'production') {
     getSignedUrl: (file, upload) => {
       const id = uuidv4()
       upload({
-        fileUrl: `http://192.168.1.101:4569/test-bucket/${id}`,
-        signedUrl: `http://192.168.1.101:4569/test-bucket/${id}`
+        fileUrl: `http://192.168.1.131:4569/test-bucket/${id}`,
+        signedUrl: `http://192.168.1.131:4569/test-bucket/${id}`
       })
     }
   }
