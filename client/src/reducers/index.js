@@ -5,6 +5,11 @@ import user from './user'
 import navbar from './navbar'
 import playlists from './playlists'
 import playlistById from './playlistById'
+import groups from './groups'
+import groupById from './groupById'
+import screens from './screens'
+import screenById from './screenById'
+import userStats from './userStats'
 
 export default {
   form: formReducer,
@@ -13,5 +18,10 @@ export default {
   user,
   navbar,
   playlists,
-  playlistById
+  playlistById,
+  groups,
+  groupById,
+  screens,
+  screenById,
+  userStats
 }

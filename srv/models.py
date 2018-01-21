@@ -74,6 +74,7 @@ class Archivo(models.Model):
     lista = models.ForeignKey(Lista, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100)
     tipo = models.CharField(max_length=30)
+    ajuste = models.CharField(max_length=12, default="cover")
     url = models.CharField(max_length=255)
     tiempo = models.IntegerField(null=True)
 
@@ -101,7 +102,7 @@ class GrupoDefecto(models.Model):
 class Dispositivo(models.Model):
     grupo = models.ForeignKey(GrupoDispositivos, null=True, on_delete=models.SET_NULL)
     nombre = models.CharField(max_length=100)
-    direccion_mac = models.CharField(max_length=25)
+    bssid = models.CharField(max_length=25)
     activo = models.BooleanField(_('active'), default=False)
 
     class Meta:
@@ -122,4 +123,4 @@ class Dispositivo(models.Model):
         return token.decode('utf-8')
 
     def __str__(self):
-        return self.direccion_mac
+        return self.bssid
