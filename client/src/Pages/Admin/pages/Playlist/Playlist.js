@@ -141,6 +141,28 @@ class Playlist extends React.Component {
     axiosInstance.put(`/api/v1/file/${fileId}/`, { tiempo: time }, { headers })
   }
 
+  updateFileFit = (fileId, fit) => {
+    const headers = {
+      Authorization: `Bearer ${this.props.token}`
+    }
+    const { playlistFiles } = this.state
+    const fileIndex = playlistFiles.findIndex(f => f.id === fileId)
+    const updatedFile = {
+      ...playlistFiles[fileIndex],
+      ajuste: fit
+    }
+
+    this.setState({
+      playlistFiles: [
+        ...playlistFiles.slice(0, fileIndex),
+        updatedFile,
+        ...playlistFiles.slice(fileIndex + 1)
+      ]
+    })
+
+    axiosInstance.put(`/api/v1/file/${fileId}/`, { ajuste: fit }, { headers })
+  }
+
   deleteFile = fileId => {
     const headers = {
       Authorization: `Bearer ${this.props.token}`
@@ -181,6 +203,16 @@ class Playlist extends React.Component {
       pageText: 'Página',
       ofText: 'de',
       rowsText: 'archivos'
+    }
+
+    const imageFits = {
+      cover: 'Cubrir',
+      contain: 'Contener'
+    }
+
+    const videoFits = {
+      ...imageFits,
+      fill: 'Expandir'
     }
 
     const columns = [
@@ -247,6 +279,33 @@ class Playlist extends React.Component {
               </button>
             </div>
           )
+      },
+      {
+        Header: 'Ajuste',
+        accessor: 'ajuste',
+        width: 150,
+        style: {
+          alignSelf: 'center'
+        },
+        Cell: props => {
+          const fileFits = props.original.tipo === 'mp4' ? videoFits : imageFits
+          return (
+            <div className="select">
+              <select
+                value={props.value}
+                onChange={e =>
+                  this.updateFileFit(props.original.id, e.target.value)
+                }
+              >
+                {Object.keys(fileFits).map(fit => (
+                  <option key={fit} value={fit}>
+                    {fileFits[fit]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )
+        }
       },
       {
         Header: 'Acciones',

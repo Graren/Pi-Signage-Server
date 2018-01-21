@@ -72,7 +72,10 @@ class UsuarioResource(ModelResource):
                 self.wrap_view('login'), name="api_login"),
             url(r"^(?P<resource_name>%s)/me%s$" %
                 (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('me'), name="me")
+                self.wrap_view('me'), name="me"),
+            url(r"^(?P<resource_name>%s)/stats%s$" %
+                (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('stats'), name="stats")
         ]
 
     def login(self, request, **kwargs):
@@ -120,6 +123,24 @@ class UsuarioResource(ModelResource):
                 'reason': 'Hubo un error al obtener la informacion de tu usuario',
             }, HttpBadRequest)
 
+    def stats(self, request, **kwargs):
+        self.method_check(request, allowed=['get'])
+        try:
+            screens_count = Dispositivo.objects.filter(grupo__user=request.user).count()
+            groups_count = GrupoDispositivos.objects.filter(user=request.user).count()
+            playlists_count = Lista.objects.filter(user=request.user).count()
+
+            return self.create_response(request, {
+                'screens': screens_count,
+                'groups': groups_count,
+                'playlists': playlists_count,
+            })
+        except Exception as e:
+            return self.create_response(request, {
+                'success': False,
+                'reason': 'Hubo un error al obtener las estadisticas de tu usuario',
+            }, HttpBadRequest)
+
 
 class ListaResource(ModelResource):
     user = fields.ForeignKey(UsuarioResource, 'user')
@@ -154,7 +175,9 @@ class ArchivoResource(ModelResource):
     class Meta:
         queryset = Archivo.objects.all()
         resource_name = 'file'
+        authentication = JwtAuthentication()
         authorization = Authorization()
+        always_return_data = True
         filtering = {
             'list': ALL_WITH_RELATIONS,
             'nombre': ['exact',],
@@ -171,6 +194,13 @@ class ArchivoResource(ModelResource):
 
         if not bundle.data.get('tipo', 'tipo') == 'mp4':
             bundle.data['tiempo'] = 10
+            fit = bundle.data.pop('ajuste', None)
+            if fit in ['cover', 'contain']:
+                bundle.data['ajuste'] = fit
+        else:
+            fit = bundle.data.pop('ajuste', None)
+            if fit in ['cover', 'contain', 'fill']:
+                bundle.data['ajuste'] = fit
 
         bundle = super(ArchivoResource, self).obj_create(bundle, **kwargs)
         bundle.obj.save()
@@ -190,13 +220,25 @@ class ArchivoResource(ModelResource):
 
 
 class GrupoDispositivoResource(ModelResource):
-    user = fields.ForeignKey(UsuarioResource, 'user', full=True)
-    list = fields.ForeignKey(ListaResource, 'lista', full=True)
+    user = fields.ForeignKey(UsuarioResource, 'user')
+    list = fields.ForeignKey(ListaResource, 'lista', full=True, null=True)
 
     class Meta:
         queryset = GrupoDispositivos.objects.all()
         resource_name = 'deviceGroup'
-        authorization = Authorization()
+        authentication = JwtAuthentication()
+        authorization = UserObjectsOnlyAuthorization()
+        always_return_data = True
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        if bundle.request.user.is_superuser:
+            bundle.data.setdefault('user', bundle.request.user)
+        else:
+            bundle.data['user'] = bundle.request.user
+
+        bundle = super(GrupoDispositivoResource, self).obj_create(bundle, **kwargs)
+        bundle.obj.save()
+        return bundle
 
     def obj_update(self, bundle, **kwargs):
         new_list_id = bundle.data.get('lista', None)
@@ -217,7 +259,8 @@ class GrupoDispositivoResource(ModelResource):
         return super(GrupoDispositivoResource, self).obj_update(bundle, **kwargs)
 
 class DispositivoResource(ModelResource):
-    grupo = fields.ForeignKey(GrupoDispositivoResource, 'grupo', full=True)
+    grupo = fields.ForeignKey(GrupoDispositivoResource, 'grupo', full=True, null=True)
+
     class Meta:
         queryset = Dispositivo.objects.all()
         resource_name = 'dispositivo'
@@ -226,6 +269,7 @@ class DispositivoResource(ModelResource):
         always_return_data = True
         filtering = {
             'nombre': ['exact', ],
+            'grupo': ['exact', 'isnull'],
         }
 
     def dehydrate(self, bundle):

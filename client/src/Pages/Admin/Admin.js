@@ -5,6 +5,10 @@ import NavBar from './containers/NavBarContainer'
 import Dashboard from './pages/Dashboard'
 import Playlists from './pages/Playlists'
 import Playlist from './pages/Playlist'
+import Groups from './pages/Groups'
+import Group from './pages/Group'
+import Screens from './pages/Screens'
+import Screen from './pages/Screen'
 
 export default class Admin extends React.Component {
   render () {
@@ -49,6 +53,16 @@ export default class Admin extends React.Component {
                   <Route
                     path={`${match.url}/playlist/:playlist_id`}
                     component={Playlist}
+                  />
+                  <Route path={`${match.url}/groups`} component={Groups} />
+                  <Route
+                    path={`${match.url}/group/:group_id`}
+                    component={Group}
+                  />
+                  <Route path={`${match.url}/screens`} component={Screens} />
+                  <Route
+                    path={`${match.url}/screen/:screen_id`}
+                    component={Screen}
                   />
                   <Route
                     render={() => {
