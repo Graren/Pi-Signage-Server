@@ -210,6 +210,16 @@ class ArchivoResource(ModelResource):
 
         return bundle
 
+    def obj_update(self, bundle, **kwargs):
+        file = Archivo.objects.get(pk=kwargs['pk'])
+        groups = GrupoDispositivos.objects.filter(lista=file.lista)
+        for key, value in bundle.data.items():
+            setattr(file, key, value)
+
+        msg = Actions.update_file(file)
+        send_ws_message_to_pi_groups(groups, msg)
+        return super(ArchivoResource, self).obj_update(bundle, **kwargs)
+
     def obj_delete(self, bundle, **kwargs):
         file = Archivo.objects.get(pk=kwargs['pk'])
         groups = GrupoDispositivos.objects.filter(lista=file.lista)

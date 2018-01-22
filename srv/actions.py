@@ -1,6 +1,7 @@
 class Actions():
     ADD = 'ADD'
     DELETE = 'DELETE'
+    UPDATE = 'UPDATE'
     CHANGE_PLAYLIST = 'CHANGE_PLAYLIST'
     DELETE_PLAYLIST = 'DELETE_PLAYLIST'
 
@@ -12,7 +13,22 @@ class Actions():
                 'id': file.id,
                 'format': file.tipo,
                 'url': file.url,
-                'time': None if file.tipo == 'mp4' else file.tiempo
+                'time': None if file.tipo == 'mp4' else file.tiempo,
+                'adjustment': file.ajuste
+            }
+        }
+        return msg
+
+    @staticmethod
+    def update_file(file):
+        msg = {
+            'action': Actions.UPDATE,
+            'payload': {
+                'id': file.id,
+                'format': file.tipo,
+                'url': file.url,
+                'time': None if file.tipo == 'mp4' else file.tiempo,
+                'adjustment': file.ajuste
             }
         }
         return msg
