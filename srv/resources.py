@@ -15,7 +15,7 @@ from tastypie.utils import trailing_slash
 from tastypie.http import HttpUnauthorized, HttpForbidden, HttpBadRequest
 from tastypie.exceptions import BadRequest
 from srv.models import Usuario, Dispositivo, GrupoDispositivos, Lista, Archivo
-from srv.utils import send_ws_message_to_pi_groups
+from srv.utils import send_ws_message_to_pi_groups, send_ws_message_to_pi_device
 from srv.actions import Actions
 
 class UsuarioResource(ModelResource):
@@ -268,6 +268,7 @@ class GrupoDispositivoResource(ModelResource):
 
         return super(GrupoDispositivoResource, self).obj_update(bundle, **kwargs)
 
+
 class DispositivoResource(ModelResource):
     grupo = fields.ForeignKey(GrupoDispositivoResource, 'grupo', full=True, null=True)
 
@@ -302,6 +303,37 @@ class DispositivoResource(ModelResource):
             raise BadRequest('Hubo un error')
 
         return bundle
+
+
+    def obj_update(self, bundle, **kwargs):
+        try:
+            new_group = bundle.data['grupo']
+            device = Dispositivo.objects.get(pk=kwargs['pk'])
+            playlist_files = []
+
+            if new_group:
+                new_group_id = new_group.get('pk', None)
+
+                if new_group_id:
+                    try:
+                        group = GrupoDispositivos.objects.get(pk=new_group_id)
+                    except GrupoDispositivos.DoesNotExist:
+                        raise BadRequest('El nuevo grupo no existe')
+
+                    if device.grupo_id != new_group_id:
+                        playlist_files = Archivo.objects.filter(lista_id=group.lista_id)
+                else:
+                    new_group_id = 0
+            else:
+                new_group_id = 0
+
+            msg = Actions.change_device_group(int(new_group_id), playlist_files)
+            send_ws_message_to_pi_device(device, msg)
+        except KeyError:
+            pass
+
+        return super(DispositivoResource, self).obj_update(bundle, **kwargs)
+
 
     def override_urls(self):
         return [

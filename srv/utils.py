@@ -13,3 +13,13 @@ def send_ws_message_to_pi_groups(groups, msg):
             pi.send({
                 'text': json.dumps(msg)
             })
+
+def send_ws_message_to_pi_device(device, msg):
+    pi = instance.getGroup("pi")
+    if pi is not None:
+        msg['request'] = {
+            'deviceId': device.id
+        }
+        pi.send({
+            'text': json.dumps(msg)
+        })

@@ -51,7 +51,8 @@ class Actions():
                 'id': file.id,
                 'format': file.tipo,
                 'url': file.url,
-                'time': None if file.tipo == 'mp4' else file.tiempo
+                'time': None if file.tipo == 'mp4' else file.tiempo,
+                'adjustment': file.ajuste
             })
 
         msg = {
@@ -59,6 +60,27 @@ class Actions():
             'payload': {
                 'playlist': files,
             }
+        }
+        return msg
+
+    @staticmethod
+    def change_device_group(new_group_id, playlist_files):
+        files = []
+        for file in playlist_files:
+            files.append({
+                'id': file.id,
+                'format': file.tipo,
+                'url': file.url,
+                'time': None if file.tipo == 'mp4' else file.tiempo,
+                'adjustment': file.ajuste
+            })
+
+        msg = {
+            'action': Actions.CHANGE_PLAYLIST,
+            'payload': {
+                'playlist': files,
+            },
+            'newGroupId': new_group_id
         }
         return msg
 
